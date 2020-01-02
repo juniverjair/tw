@@ -1,0 +1,95 @@
+
+
+{% extends 'base.html' %}
+{% block content %}
+
+
+<script>
+  $('#exampleModal').on('show.bs.modal', function (event) {
+  var button = $(event.relatedTarget) // Button that triggered the modal
+  var recipient = button.data('whatever') // Extract info from data-* attributes
+  // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+  // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+  var modal = $(this)
+  modal.find('.modal-title').text('New message to ' + recipient)
+  modal.find('.modal-body input').val(recipient)
+})
+
+</script>
+  <div class="container">
+    <h1 class="mt-5">Sorteos</h1>
+
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Crear Sorteo</button>
+  </br>
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Nuevo Sorteo</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            
+            <form action="/home/sorteosCrear/" method="post">
+              {% csrf_token %}
+            <div class="modal-body">
+              
+                <div class="form-group">
+                  <label for="recipient-name" class="col-form-label">Nombre:</label>
+                  <input type="text" class="form-control" name="nombre" id="nombre">
+                </div>
+
+                <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">Hashtag:</label>
+                    <input type="text" class="form-control" name="hashtag" id="hashtag">
+                  </div>
+           
+              
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+              <button class="btn btn-primary" type="submit" value="Send">Crear</button>
+            </div>
+          </form>
+          </div>
+        </div>
+      </div>
+
+
+    
+    <table class="table">
+        
+      <thead>
+        <tr>
+          <th scope="col">Fecha</th>
+          <th scope="col">Nombre</th>
+          <th scope="col">Hashtag</th>
+       
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="myUL">
+        
+        {% for s in sorteos %}
+
+        <tr>
+          <th scope="row">{{ s.fecha }}</th>
+          <td>{{ s.nombre }}</td>
+          <td>{{ s.hashtag }}</td>
+       
+          <td>
+              <form action="/home/tweetsCargar/" method="post">
+                {% csrf_token %}
+            <input type="text" value="{{s.id}}" name="sorteo" id="sorteo" hidden>
+            <button type="submit" value="Send" class="btn btn-primary">Ver</button>
+          </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+
+    
+    </table>
+  </div>
+{% endblock content %}

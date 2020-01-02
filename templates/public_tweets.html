@@ -1,0 +1,36 @@
+
+
+{% extends 'base.html' %}
+{% block content %}
+
+  <div class="container">
+    <h1 class="mt-5">Sorteos</h1>
+    <h3><b>Ganador: </b> {{ ganador }}</h3>
+    <form action="/home/encontrarGanador/" method="post">
+        {% csrf_token %}
+        <input type="text" value="{{sorteo}}" name="sorteo" id="sorteo" hidden>
+        <button type="submit" value="Send" class="btn btn-primary">Encontrar Ganador</button>
+        </form>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Fecha</th>
+          <th scope="col">Tweet</th>
+          <th scope="col">Usuario</th>
+      
+        </tr>
+      </thead>
+      <tbody id="myUL">
+        
+        {% for tweet in public_tweets %}
+        <tr>
+          <th scope="row">{{ tweet.fecha }}</th>
+          <td>{{ tweet.texto }}</td>
+          <td>{{ tweet.usuario }}</td>
+
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock content %}
