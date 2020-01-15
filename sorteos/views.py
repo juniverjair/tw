@@ -5,7 +5,7 @@ from .models import Sorteo, Tweet
 
 import random
 from django.http import JsonResponse
-
+import json
 from django.core import serializers
 from django.http import HttpResponse
 
@@ -128,6 +128,7 @@ def sorteosCrear(request):
 
     nombre = request.POST["nombre"]
     hashtag = request.POST["hashtag"]
+    user_name = request.POST["user_name"]
 
     u = Sorteo(nombre=nombre, hashtag=hashtag)
     u.save()
@@ -144,13 +145,19 @@ def sorteosCrear(request):
 
     #seleccionados = []
 
-    #for tweet in tweepy.Cursor(api.search, q="#ESPOL", count=5, result_type = 'recent').items():
-    for tweet in api.search(q = hashtag + " -filter:retweets", count = 20, result_type = 'recent', tweet_mode="extended"):
+    #for tweet in tweepy.Cursor(api.search, q="#ESPOL"" -filter:retweets" count=5, result_type = 'recent').items():
+    for tweet in api.search(q="to:" + user_name, count = 1000, result_type = 'recent', tweet_mode="extended"):
+
+       
+        #json_str = json.dumps(tweet._json)
+        #print(json_str)
 
         #seleccionados.append({"usuario": tweet.user.screen_name, "fecha":tweet.created_at, "texto": tweet.full_text})
 
-        k = Tweet(usuario=tweet.user.screen_name, fecha=tweet.created_at, texto=tweet.full_text, sorteo=u)
-        k.save()
+        if hashtag.lower() in tweet.full_text.lower():
+
+            k = Tweet(usuario=tweet.user.screen_name, fecha=tweet.created_at, texto=tweet.full_text, sorteo=u)
+            k.save()
 
 
     sorteos = Sorteo.objects.all()
